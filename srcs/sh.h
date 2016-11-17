@@ -6,7 +6,7 @@
 /*   By: kyork <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/16 16:13:33 by kyork             #+#    #+#             */
-/*   Updated: 2016/11/16 16:25:25 by kyork            ###   ########.fr       */
+/*   Updated: 2016/11/16 17:49:25 by kyork            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,10 @@ typedef int				(*t_builtin_f)(t_shell* sh, char **argv);
 
 typedef struct			s_cmd {
 	char				**argv;
+	char				**envp;
 	t_builtin_f			builtin;
 	struct s_cmd		*next;
-}					t_cmd;
+}						t_cmd;
 /*
 ** t_cmd.argv: allocated[allocated]
 */
@@ -46,9 +47,19 @@ typedef struct			s_builtin_def {
 	const char			*name;
 	t_builtin_f			func;
 }						t_builtin_def;
+typedef struct			s_signal_def {
+	int					sig;
+	const char			*name;
+}						t_signal_def;
+
+void					ft_perror(char *ctx);
+
+void					shell_loop(t_shell *sh);
+
+t_cmd					*parse_line(char *line);
 
 t_builtin_f				get_builtin(char **argv);
-t_cmd					*parse_line(char *line);
-void					shell_loop(t_shell *sh);
+int						exec_command(t_shell *sh, t_cmd *cmd);
+void					handle_result(t_shell *sh, t_cmd *cmd, int status);
 
 #endif

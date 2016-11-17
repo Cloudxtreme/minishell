@@ -6,7 +6,7 @@
 /*   By: kyork <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/16 16:04:20 by kyork             #+#    #+#             */
-/*   Updated: 2016/11/16 16:19:33 by kyork            ###   ########.fr       */
+/*   Updated: 2016/11/16 17:32:51 by kyork            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static void	prompt(void)
 	free(str);
 }
 
-void		shell_loop(void)
+void		shell_loop(t_shell *sh)
 {
 	char	*line;
 	int		status;
@@ -34,11 +34,17 @@ void		shell_loop(void)
 
 	while (1)
 	{
+		prompt();
 		status = get_next_line(0, &line);
 		if (status <= 0)
 			break ;
 		cmd = parse_line(line);
 		free(line);
+		if (cmd->builtin)
+			status = cmd->builtin(sh, cmd->argv);
+		else
+			status = exec_command(sh, cmd);
+		handle_result(sh, cmd, status);
 	}
 	if (status == 0)
 		ft_printf("logout\n");
